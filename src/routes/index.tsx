@@ -67,7 +67,7 @@ const initialData: BriefingData = {
   notes: "",
 };
 
-const steps: Step[] = [
+const steps: [Step, ...Step[]] = [
   {
     key: "contact",
     eyebrow: "Vamos começar",
@@ -188,7 +188,7 @@ function BriefingPage() {
   const [showError, setShowError] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
 
-  const step = steps[currentStep];
+  const step = steps[currentStep] ?? steps[0];
   const value = data[step.key];
   const progress = ((currentStep + 1) / steps.length) * 100;
 
