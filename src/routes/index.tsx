@@ -150,7 +150,65 @@ function BriefingPage() {
   const restart = () => {
     setData(initialData);
     setCurrentStep(0);
+    setSaveError("");
     setScreen("welcome");
+  };
+
+  const missingRequired = () => {
+    for (const item of steps) {
+      if (!item.optional && !data[item.key].trim()) return item;
+      if (item.conditional && data[item.key] === "Sim" && !data[item.conditional.answerKey].trim()) return item;
+    }
+    return null;
+  };
+
+  const submitBriefing = async () => {
+    if (saving) return;
+    const missing = missingRequired();
+    if (missing) {
+      setSaveError("Algumas respostas obrigatórias estão em branco. Revise o briefing antes de enviar.");
+      setCurrentStep(steps.indexOf(missing));
+      setScreen("form");
+      return;
+    }
+    setSaving(true);
+    setSaveError("");
+    const { error } = await supabase.from("briefings").insert({
+      full_name: data.fullName,
+      business_name: data.businessName,
+      profession: data.profession,
+      main_whatsapp: data.mainWhatsapp,
+      other_phone: data.otherPhone || null,
+      email: data.email,
+      location: data.location,
+      work_address: data.workAddress || null,
+      site_goal: data.siteGoal,
+      services: data.services,
+      has_site: data.hasSite,
+      site_url: data.siteUrl || null,
+      has_domain: data.hasDomain,
+      domain: data.domain || null,
+      hosting: data.hosting,
+      has_logo: data.hasLogo,
+      logo_file: data.logoFile || null,
+      colors: data.colors,
+      has_reference: data.hasReference,
+      reference_url: data.referenceUrl || null,
+      about: data.about,
+      public_whatsapp: data.publicWhatsapp,
+      public_phone: data.publicPhone || null,
+      instagram: data.instagram,
+      facebook: data.facebook,
+      linkedin: data.linkedin,
+      status: "Novo",
+      submitted_at: new Date().toISOString(),
+    });
+    setSaving(false);
+    if (error) {
+      setSaveError("Não foi possível enviar seu briefing agora. Tente novamente em instantes.");
+      return;
+    }
+    setScreen("finished");
   };
 
   if (screen === "welcome") {
