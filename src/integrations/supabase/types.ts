@@ -14,7 +14,108 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      briefings: {
+        Row: {
+          about: string
+          business_name: string
+          colors: string
+          created_at: string
+          domain: string | null
+          email: string
+          facebook: string
+          full_name: string
+          has_domain: string
+          has_logo: string
+          has_reference: string
+          has_site: string
+          hosting: string
+          id: string
+          instagram: string
+          linkedin: string
+          location: string
+          logo_file: string | null
+          main_whatsapp: string
+          other_phone: string | null
+          profession: string
+          public_phone: string | null
+          public_whatsapp: string
+          reference_url: string | null
+          services: string
+          site_goal: string
+          site_url: string | null
+          status: string
+          submitted_at: string
+          updated_at: string
+          work_address: string | null
+        }
+        Insert: {
+          about: string
+          business_name: string
+          colors: string
+          created_at?: string
+          domain?: string | null
+          email: string
+          facebook: string
+          full_name: string
+          has_domain: string
+          has_logo: string
+          has_reference: string
+          has_site: string
+          hosting: string
+          id?: string
+          instagram: string
+          linkedin: string
+          location: string
+          logo_file?: string | null
+          main_whatsapp: string
+          other_phone?: string | null
+          profession: string
+          public_phone?: string | null
+          public_whatsapp: string
+          reference_url?: string | null
+          services: string
+          site_goal: string
+          site_url?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          work_address?: string | null
+        }
+        Update: {
+          about?: string
+          business_name?: string
+          colors?: string
+          created_at?: string
+          domain?: string | null
+          email?: string
+          facebook?: string
+          full_name?: string
+          has_domain?: string
+          has_logo?: string
+          has_reference?: string
+          has_site?: string
+          hosting?: string
+          id?: string
+          instagram?: string
+          linkedin?: string
+          location?: string
+          logo_file?: string | null
+          main_whatsapp?: string
+          other_phone?: string | null
+          profession?: string
+          public_phone?: string | null
+          public_whatsapp?: string
+          reference_url?: string | null
+          services?: string
+          site_goal?: string
+          site_url?: string | null
+          status?: string
+          submitted_at?: string
+          updated_at?: string
+          work_address?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
