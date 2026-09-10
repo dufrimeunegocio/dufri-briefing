@@ -331,6 +331,8 @@ function BriefingPage() {
               <div className="mt-3 min-h-6">{step.optional && !value ? <p className="text-sm text-muted-foreground">Esta pergunta é opcional.</p> : !canContinue ? <p className="text-sm text-muted-foreground">Preencha esta resposta para continuar.</p> : null}</div>
             </div>
 
+            {saveError && <p className="text-sm font-semibold text-destructive">{saveError}</p>}
+
             <div className="mt-7 grid grid-cols-[auto_minmax(0,1fr)] gap-3 sm:flex sm:justify-between">
               <div>{currentStep > 0 && <ActionButton secondary onClick={() => setCurrentStep((index) => index - 1)}><ArrowLeft className="h-5 w-5" /><span className="hidden sm:inline">Voltar</span></ActionButton>}</div>
               <div className="sm:w-44"><ActionButton onClick={continueFlow} disabled={!canContinue}>{currentStep === steps.length - 1 ? "Concluir" : "Continuar"}<ArrowRight className="h-5 w-5" /></ActionButton></div>
