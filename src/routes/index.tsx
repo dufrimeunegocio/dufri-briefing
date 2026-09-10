@@ -12,7 +12,6 @@ import {
   UploadCloud,
 } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
-import logoAsset from "../assets/dufri-logo.jpeg.asset.json";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
@@ -93,7 +92,7 @@ const steps: [Step, ...Step[]] = [
 function BrandMark({ compact = false }: { compact?: boolean }) {
   return (
     <div className="flex items-center gap-3">
-      <img src={logoAsset.url} alt="Dufri Meu Negócio" className={compact ? "h-11 w-11 rounded-sm object-cover" : "h-20 w-20 rounded-sm object-cover shadow-brand"} />
+      <img src={logo.url} alt="Dufri Meu Negócio" className={compact ? "h-11 w-11 rounded-sm object-cover" : "h-20 w-20 rounded-sm object-cover shadow-brand"} />
       <div className="leading-none">
         <span className="block font-display text-lg font-bold text-primary">DUFRI</span>
         <span className="mt-1 block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-muted-foreground">Meu Negócio</span>
@@ -218,7 +217,7 @@ function BriefingPage() {
         <section className="welcome-brand" aria-label="Dufri Meu Negócio">
           <div className="brand-pattern" aria-hidden="true" />
           <div className="relative z-10">
-            <img src={logoAsset.url} alt="Logo Dufri" className="h-24 w-24 rounded-sm object-cover shadow-brand lg:h-28 lg:w-28" />
+            <img src={logo-dufri.jpeg} alt="Logo Dufri" className="h-24 w-24 rounded-sm object-cover shadow-brand lg:h-28 lg:w-28" />
             <p className="mt-8 max-w-xs text-sm leading-6 text-brand-panel-muted">Estratégia, presença digital e sites que aproximam negócios de seus clientes.</p>
           </div>
           <span className="relative z-10 hidden text-xs font-semibold uppercase tracking-[0.14em] text-brand-panel-muted lg:block">Dufri Meu Negócio</span>
