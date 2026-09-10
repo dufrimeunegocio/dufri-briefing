@@ -250,7 +250,10 @@ function BriefingPage() {
           <h1 className="mt-4 font-display text-4xl font-bold text-primary sm:text-5xl">Briefing concluído! <span aria-hidden="true">🎉</span></h1>
           <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">Recebemos suas informações. Em breve vamos analisar seu briefing e dar continuidade ao seu projeto.</p>
           {screen === "done" ? (
-            <div className="mt-9 w-full max-w-xs"><ActionButton onClick={() => setScreen("finished")}><CheckCircle2 className="h-5 w-5" />Finalizar briefing</ActionButton></div>
+            <>
+              <div className="mt-9 w-full max-w-xs"><ActionButton onClick={submitBriefing} disabled={saving}><CheckCircle2 className="h-5 w-5" />{saving ? "Enviando..." : "Finalizar briefing"}</ActionButton></div>
+              {saveError && <p className="mt-4 max-w-md text-sm font-semibold text-destructive">{saveError}</p>}
+            </>
           ) : (
             <>
               <div className="mt-8 flex items-center gap-2 rounded-md bg-success-soft px-4 py-3 text-sm font-semibold text-success"><CheckCircle2 className="h-5 w-5" />Briefing finalizado com sucesso</div>
