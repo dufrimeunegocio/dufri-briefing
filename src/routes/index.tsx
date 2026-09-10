@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent, type ReactNode } from "react";
 import logoAsset from "../assets/dufri-logo.jpeg.asset.json";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -109,6 +110,8 @@ function BriefingPage() {
   const [screen, setScreen] = useState<"welcome" | "form" | "done" | "finished">("welcome");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<BriefingData>(initialData);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -148,7 +151,65 @@ function BriefingPage() {
   const restart = () => {
     setData(initialData);
     setCurrentStep(0);
+    setSaveError("");
     setScreen("welcome");
+  };
+
+  const missingRequired = () => {
+    for (const item of steps) {
+      if (!item.optional && !data[item.key].trim()) return item;
+      if (item.conditional && data[item.key] === "Sim" && !data[item.conditional.answerKey].trim()) return item;
+    }
+    return null;
+  };
+
+  const submitBriefing = async () => {
+    if (saving) return;
+    const missing = missingRequired();
+    if (missing) {
+      setSaveError("Algumas respostas obrigatórias estão em branco. Revise o briefing antes de enviar.");
+      setCurrentStep(steps.indexOf(missing));
+      setScreen("form");
+      return;
+    }
+    setSaving(true);
+    setSaveError("");
+    const { error } = await supabase.from("briefings").insert({
+      full_name: data.fullName,
+      business_name: data.businessName,
+      profession: data.profession,
+      main_whatsapp: data.mainWhatsapp,
+      other_phone: data.otherPhone || null,
+      email: data.email,
+      location: data.location,
+      work_address: data.workAddress || null,
+      site_goal: data.siteGoal,
+      services: data.services,
+      has_site: data.hasSite,
+      site_url: data.siteUrl || null,
+      has_domain: data.hasDomain,
+      domain: data.domain || null,
+      hosting: data.hosting,
+      has_logo: data.hasLogo,
+      logo_file: data.logoFile || null,
+      colors: data.colors,
+      has_reference: data.hasReference,
+      reference_url: data.referenceUrl || null,
+      about: data.about,
+      public_whatsapp: data.publicWhatsapp,
+      public_phone: data.publicPhone || null,
+      instagram: data.instagram,
+      facebook: data.facebook,
+      linkedin: data.linkedin,
+      status: "Novo",
+      submitted_at: new Date().toISOString(),
+    });
+    setSaving(false);
+    if (error) {
+      setSaveError("Não foi possível enviar seu briefing agora. Tente novamente em instantes.");
+      return;
+    }
+    setScreen("finished");
   };
 
   if (screen === "welcome") {
@@ -189,7 +250,10 @@ function BriefingPage() {
           <h1 className="mt-4 font-display text-4xl font-bold text-primary sm:text-5xl">Briefing concluído! <span aria-hidden="true">🎉</span></h1>
           <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">Recebemos suas informações. Em breve vamos analisar seu briefing e dar continuidade ao seu projeto.</p>
           {screen === "done" ? (
-            <div className="mt-9 w-full max-w-xs"><ActionButton onClick={() => setScreen("finished")}><CheckCircle2 className="h-5 w-5" />Finalizar briefing</ActionButton></div>
+            <>
+              <div className="mt-9 w-full max-w-xs"><ActionButton onClick={submitBriefing} disabled={saving}><CheckCircle2 className="h-5 w-5" />{saving ? "Enviando..." : "Finalizar briefing"}</ActionButton></div>
+              {saveError && <p className="mt-4 max-w-md text-sm font-semibold text-destructive">{saveError}</p>}
+            </>
           ) : (
             <>
               <div className="mt-8 flex items-center gap-2 rounded-md bg-success-soft px-4 py-3 text-sm font-semibold text-success"><CheckCircle2 className="h-5 w-5" />Briefing finalizado com sucesso</div>
@@ -266,6 +330,8 @@ function BriefingPage() {
 
               <div className="mt-3 min-h-6">{step.optional && !value ? <p className="text-sm text-muted-foreground">Esta pergunta é opcional.</p> : !canContinue ? <p className="text-sm text-muted-foreground">Preencha esta resposta para continuar.</p> : null}</div>
             </div>
+
+            {saveError && <p className="text-sm font-semibold text-destructive">{saveError}</p>}
 
             <div className="mt-7 grid grid-cols-[auto_minmax(0,1fr)] gap-3 sm:flex sm:justify-between">
               <div>{currentStep > 0 && <ActionButton secondary onClick={() => setCurrentStep((index) => index - 1)}><ArrowLeft className="h-5 w-5" /><span className="hidden sm:inline">Voltar</span></ActionButton>}</div>
