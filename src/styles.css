@@ -102,6 +102,7 @@
   font-weight: 800;
   transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
   &:active { transform: translateY(1px); }
+  &:disabled { cursor: not-allowed; opacity: 0.42; box-shadow: none; transform: none; }
 }
 
 @utility action-button-primary {
@@ -198,6 +199,27 @@
 @utility option-button-selected { border-color: var(--color-accent); background: color-mix(in oklab, var(--color-accent) 8%, var(--color-card)); }
 @utility option-check { display: grid; height: 1.5rem; width: 1.5rem; flex-shrink: 0; place-items: center; border-radius: 999px; border: 1.5px solid var(--color-input); color: var(--color-primary-foreground); }
 .option-button-selected .option-check { border-color: var(--color-accent); background: var(--color-accent); }
+@utility conditional-field {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  animation: step-in 280ms ease-out both;
+}
+@utility upload-area {
+  display: flex;
+  min-height: 9rem;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1.5px dashed var(--color-input);
+  background: var(--color-card);
+  padding: 1.5rem;
+  text-align: center;
+  transition: border-color 180ms ease, background-color 180ms ease;
+  &:hover { border-color: var(--color-accent); background: color-mix(in oklab, var(--color-accent) 5%, var(--color-card)); }
+}
 @utility success-mark { display: grid; height: 5rem; width: 5rem; place-items: center; border-radius: 999px; background: var(--color-success); color: var(--color-primary-foreground); box-shadow: 0 18px 35px color-mix(in oklab, var(--color-success) 22%, transparent); }
 
 .step-enter { animation: step-in 360ms cubic-bezier(.22,.8,.3,1) both; }
