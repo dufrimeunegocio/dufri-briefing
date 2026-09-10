@@ -109,6 +109,8 @@ function BriefingPage() {
   const [screen, setScreen] = useState<"welcome" | "form" | "done" | "finished">("welcome");
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<BriefingData>(initialData);
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const contentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
