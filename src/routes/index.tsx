@@ -583,11 +583,20 @@ function BriefingPage() {
     setSaving(false);
 
     if (error) {
-      setSaveError(
-        "Não foi possível enviar seu briefing agora. Tente novamente em instantes."
-      );
-      return;
-    }
+  console.error("ERRO AO SALVAR BRIEFING:", {
+    message: error.message,
+    details: error.details,
+    hint: error.hint,
+    code: error.code,
+  });
+
+  setSaveError(
+    `Erro ao enviar: ${error.message}`
+  );
+
+  setSaving(false);
+  return;
+}
 
     setScreen("finished");
   };
