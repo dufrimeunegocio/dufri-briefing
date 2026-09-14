@@ -675,7 +675,7 @@ function BriefingPage() {
           <BrandMark compact />
 
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            Briefing concluído
+            {screen === "done" ? "Revisão final" : "Briefing concluído"}
           </span>
         </header>
 
@@ -692,17 +692,23 @@ function BriefingPage() {
           </div>
 
           <span className="section-kicker mt-8">
-            Tudo preenchido
+            {screen === "done" ? "Pronto para enviar" : "Tudo preenchido"}
           </span>
 
           <h1 className="mt-4 font-display text-4xl font-bold text-primary sm:text-5xl">
-            Briefing concluído!{" "}
-            <span aria-hidden="true">🎉</span>
+            {screen === "done" ? (
+              "Confira suas informações"
+            ) : (
+              <>
+                Briefing concluído! <span aria-hidden="true">🎉</span>
+              </>
+            )}
           </h1>
 
           <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground sm:text-lg">
-            Recebemos suas informações. Em breve vamos analisar seu
-            briefing e dar continuidade ao seu projeto.
+            {screen === "done"
+              ? "Revise suas respostas antes de enviar o briefing."
+              : "Recebemos suas informações. Em breve vamos analisar seu briefing e dar continuidade ao seu projeto."}
           </p>
 
           {screen === "done" ? (
@@ -715,7 +721,7 @@ function BriefingPage() {
                   <CheckCircle2 className="h-5 w-5" />
                   {saving
                     ? "Enviando..."
-                    : "Finalizar briefing"}
+                    : "Enviar briefing"}
                 </ActionButton>
               </div>
 
