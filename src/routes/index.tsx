@@ -20,6 +20,7 @@ import {
   type ReactNode,
 } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import type { TablesInsert } from "@/integrations/supabase/types";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -544,38 +545,40 @@ function BriefingPage() {
     setSaving(true);
     setSaveError("");
 
+    const briefingPayload: TablesInsert<"briefings"> = {
+      full_name: data.fullName,
+      business_name: data.businessName,
+      profession: data.profession,
+      main_whatsapp: data.mainWhatsapp,
+      other_phone: data.otherPhone || null,
+      email: data.email,
+      location: data.location,
+      work_address: data.workAddress || null,
+      site_goal: data.siteGoal,
+      services: data.services,
+      has_site: data.hasSite,
+      site_url: data.siteUrl || null,
+      has_domain: data.hasDomain,
+      domain: data.domain || null,
+      hosting: data.hosting,
+      has_logo: data.hasLogo,
+      logo_file: data.logoFile || null,
+      colors: data.colors,
+      has_reference: data.hasReference,
+      reference_url: data.referenceUrl || null,
+      about: data.about,
+      public_whatsapp: data.publicWhatsapp,
+      public_phone: data.publicPhone || null,
+      instagram: data.instagram,
+      facebook: data.facebook,
+      linkedin: data.linkedin,
+      status: "Novo",
+      submitted_at: new Date().toISOString(),
+    };
+
     const { error } = await supabase
       .from("briefings")
-      .insert({
-        full_name: data.fullName,
-        business_name: data.businessName,
-        profession: data.profession,
-        main_whatsapp: data.mainWhatsapp,
-        other_phone: data.otherPhone || null,
-        email: data.email,
-        location: data.location,
-        work_address: data.workAddress || null,
-        site_goal: data.siteGoal,
-        services: data.services,
-        has_site: data.hasSite,
-        site_url: data.siteUrl || null,
-        has_domain: data.hasDomain,
-        domain: data.domain || null,
-        hosting: data.hosting,
-        has_logo: data.hasLogo,
-        logo_file: data.logoFile || null,
-        colors: data.colors,
-        has_reference: data.hasReference,
-        reference_url: data.referenceUrl || null,
-        about: data.about,
-        public_whatsapp: data.publicWhatsapp,
-        public_phone: data.publicPhone || null,
-        instagram: data.instagram,
-        facebook: data.facebook,
-        linkedin: data.linkedin,
-        status: "Novo",
-        submitted_at: new Date().toISOString(),
-      });
+      .insert(briefingPayload);
 
     setSaving(false);
 
