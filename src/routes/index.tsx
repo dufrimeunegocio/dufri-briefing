@@ -576,29 +576,53 @@ function BriefingPage() {
       submitted_at: new Date().toISOString(),
     };
 
-    const { error } = await supabase
-      .from("briefings")
-      .insert(briefingPayload);
+    try {
+      const { data: createdBriefings, error } = await supabase
+        .from("briefings")
+        .insert(briefingPayload)
+        .select("id");
 
-    setSaving(false);
+      if (error) {
+        console.error("ERRO AO SALVAR BRIEFING:", {
+          message: error.message,
+          code: error.code,
+          details: error.details,
+          hint: error.hint,
+        });
 
-    if (error) {
-  console.error("ERRO AO SALVAR BRIEFING:", {
-    message: error.message,
-    details: error.details,
-    hint: error.hint,
-    code: error.code,
-  });
+        const extraDetails = [
+          error.code ? `Código: ${error.code}` : "",
+          error.details ? `Detalhes: ${error.details}` : "",
+          error.hint ? `Orientação: ${error.hint}` : "",
+        ].filter(Boolean);
 
-  setSaveError(
-    `Erro ao enviar: ${error.message}`
-  );
+        setSaveError(
+          [`Erro ao enviar: ${error.message}`, ...extraDetails].join(" • ")
+        );
+        return;
+      }
 
-  setSaving(false);
-  return;
-}
+      if (!createdBriefings?.[0]?.id) {
+        const confirmationError = new Error(
+          "O banco não confirmou a criação do briefing."
+        );
+        console.error("ERRO AO CONFIRMAR BRIEFING:", confirmationError);
+        setSaveError(`Erro ao enviar: ${confirmationError.message}`);
+        return;
+      }
 
-    setScreen("finished");
+      setScreen("finished");
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Falha inesperada de conexão com o banco.";
+
+      console.error("ERRO INESPERADO AO SALVAR BRIEFING:", error);
+      setSaveError(`Erro ao enviar: ${message}`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (screen === "welcome") {
