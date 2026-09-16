@@ -577,10 +577,9 @@ function BriefingPage() {
     };
 
     try {
-      const { data: createdBriefings, error } = await supabase
+      const { error } = await supabase
         .from("briefings")
-        .insert(briefingPayload)
-        .select("id");
+        .insert(briefingPayload);
 
       if (error) {
         console.error("ERRO AO SALVAR BRIEFING:", {
@@ -599,15 +598,6 @@ function BriefingPage() {
         setSaveError(
           [`Erro ao enviar: ${error.message}`, ...extraDetails].join(" • ")
         );
-        return;
-      }
-
-      if (!createdBriefings?.[0]?.id) {
-        const confirmationError = new Error(
-          "O banco não confirmou a criação do briefing."
-        );
-        console.error("ERRO AO CONFIRMAR BRIEFING:", confirmationError);
-        setSaveError(`Erro ao enviar: ${confirmationError.message}`);
         return;
       }
 
