@@ -1,5 +1,5 @@
 # Roadmap
 
-- [x] Confirmar o banco e o esquema efetivamente usados pelo site publicado.
-- [x] Confirmar se os envios recentes foram gravados no banco conectado.
-- [ ] Conectar o projeto ao banco externo que contém `public.briefings` com colunas em português; bloqueado até o usuário identificar/conectar esse banco correto.
+- [ ] Consultar o esquema completo de `public.briefings` no ambiente Live pelo banco e pela API pública.
+- [ ] Atualizar os tipos e o `briefingPayload` para usar somente colunas reais.
+- [ ] Validar todos os nomes enviados e confirmar o fluxo de erro/sucesso sem alterar o visual.
