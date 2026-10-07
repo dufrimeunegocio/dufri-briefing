@@ -5,4 +5,4 @@
 - [x] Recarregar o catálogo da API e validar os 28 campos sem criar ou remover registros.
 - [x] Diagnosticar o upload: apenas nome local, bucket privado e nenhuma política de upload.
 - [x] Implementar upload real no bucket privado logos e associação pelo caminho em logo_file.
-- [ ] Testar upload pelo formulário e recuperação do arquivo armazenado sem alterar briefings existentes.
+- [x] Testar upload pelo formulário (HTTP 200), recuperação com bytes idênticos e associação em logo_file sem criar ou alterar briefings existentes.
