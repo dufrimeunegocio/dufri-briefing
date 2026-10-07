@@ -424,6 +424,9 @@ function BriefingPage() {
   const [data, setData] = useState<BriefingData>(initialData);
   const [saving, setSaving] = useState(false);
   const [saveError, setSaveError] = useState("");
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+  const [logoName, setLogoName] = useState("");
+  const logoUploadVersion = useRef(0);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -441,7 +444,7 @@ function BriefingPage() {
     step.conditional && value === "Sim"
   );
 
-  const canContinue = Boolean(
+  const canContinue = !uploadingLogo && Boolean(
     step.optional ||
       (value.trim() &&
         (!requiresConditional || conditionalValue.trim()))
@@ -455,6 +458,11 @@ function BriefingPage() {
   }, [currentStep, screen]);
 
   const setValue = (key: AnswerKey, next: string) => {
+    if (key === "hasLogo" && next !== "Sim") {
+      logoUploadVersion.current += 1;
+      setUploadingLogo(false);
+      setLogoName("");
+    }
     setData((previous) => {
       const updated = {
         ...previous,
@@ -491,17 +499,55 @@ function BriefingPage() {
     }
   };
 
-  const handleFile = (
+  const handleFile = async (
     event: ChangeEvent<HTMLInputElement>
   ) => {
     const file = event.target.files?.[0];
 
-    if (file) {
-      setValue("logoFile", file.name);
+    if (!file) return;
+    event.target.value = "";
+    const version = ++logoUploadVersion.current;
+    setValue("logoFile", "");
+    setLogoName("");
+    setSaveError("");
+    const extensions: Record<string, string> = {
+      "image/png": "png",
+      "image/jpeg": "jpg",
+      "image/webp": "webp",
+      "image/svg+xml": "svg",
+    };
+    const extension = extensions[file.type];
+    if (!extension || file.size === 0 || file.size > 10 * 1024 * 1024) {
+      setSaveError("Selecione uma imagem PNG, JPG, WEBP ou SVG de até 10 MB.");
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const path = `briefings/${crypto.randomUUID()}.${extension}`;
+      const { data: uploaded, error } = await supabase.storage
+        .from("logos")
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (error) throw error;
+      if (version !== logoUploadVersion.current) return;
+      // Permanent private Storage path; the admin panel can create signed URLs.
+      setValue("logoFile", uploaded.path);
+      setLogoName(file.name);
+    } catch (error) {
+      console.error("ERRO AO ENVIAR LOGO:", error);
+      if (version !== logoUploadVersion.current) return;
+      const message = error instanceof Error ? error.message : "Falha de conexão ao enviar a imagem.";
+      const code = error && typeof error === "object" && "statusCode" in error
+        ? ` • Código: ${String(error.statusCode)}` : "";
+      setSaveError(`Erro ao enviar logo: ${message}${code}. Selecione o arquivo novamente para tentar.`);
+    } finally {
+      if (version === logoUploadVersion.current) setUploadingLogo(false);
     }
   };
 
   const restart = () => {
+    logoUploadVersion.current += 1;
+    setUploadingLogo(false);
+    setLogoName("");
     setData(initialData);
     setCurrentStep(0);
     setSaveError("");
@@ -527,7 +573,7 @@ function BriefingPage() {
   };
 
   const submitBriefing = async () => {
-    if (saving) return;
+    if (saving || uploadingLogo) return;
 
     const missing = missingRequired();
 
@@ -562,7 +608,7 @@ function BriefingPage() {
       domain: data.domain || null,
       hosting: data.hosting,
       has_logo: data.hasLogo,
-      logo_file: data.logoFile || null,
+      logo_file: data.hasLogo === "Sim" ? data.logoFile || null : null,
       colors: data.colors,
       has_reference: data.hasReference,
       reference_url: data.referenceUrl || null,
@@ -958,6 +1004,7 @@ function BriefingPage() {
                           type="file"
                           accept="image/png,image/jpeg,image/webp,image/svg+xml"
                           onChange={handleFile}
+                          disabled={uploadingLogo}
                           className="sr-only"
                           id="logo-upload"
                         />
@@ -968,6 +1015,8 @@ function BriefingPage() {
                             fileInputRef.current?.click()
                           }
                           className="upload-area"
+                          disabled={uploadingLogo}
+                          aria-busy={uploadingLogo}
                         >
                           {conditionalValue ? (
                             <FileImage className="h-7 w-7 text-success" />
@@ -976,7 +1025,7 @@ function BriefingPage() {
                           )}
 
                           <span className="font-bold text-primary">
-                            {conditionalValue ||
+                            {uploadingLogo ? "Enviando logo..." : logoName ||
                               "Selecionar imagem da logo"}
                           </span>
 
