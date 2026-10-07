@@ -1,0 +1,1 @@
+CREATE POLICY "Visitors can upload briefing logos" ON storage.objects FOR INSERT TO anon, authenticated WITH CHECK (bucket_id = 'logos' AND (storage.foldername(name))[1] = 'briefings' AND lower(storage.extension(name)) IN ('png', 'jpg', 'jpeg', 'webp', 'svg'));
