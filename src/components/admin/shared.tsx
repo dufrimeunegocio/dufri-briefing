@@ -1,0 +1,6 @@
+import { Button } from '@/components/ui/button';
+import { useRouter } from '@tanstack/react-router';
+export function AdminBrand() { return <div className="flex items-center gap-3"><img src="/logo-dufri.jpeg" alt="Dufri Meu Negócio" className="size-11 rounded-sm object-cover"/><div><span className="block font-display text-lg font-bold text-primary">DUFRI</span><span className="block text-xs font-semibold text-muted-foreground">Meu Negócio</span></div></div>; }
+export function AdminError({error}:{error:Error}) { const router=useRouter(); return <section className="py-12"><h1 className="font-display text-2xl font-bold text-primary">Não foi possível carregar</h1><p role="alert" className="my-4 text-destructive">{error.message}</p><Button onClick={()=>router.invalidate()}>Tentar novamente</Button></section>; }
+export function AdminNotFound() { return <p className="py-12 text-muted-foreground">Briefing não encontrado.</p>; }
+export function StatusLabel({status}:{status:string}) { return <span className={`inline-flex rounded-sm px-2.5 py-1 text-xs font-bold ${status==='Concluído' ? 'bg-success-soft text-success' : status==='Novo' ? 'bg-secondary text-primary' : 'bg-muted text-foreground'}`}>{status}</span>; }
